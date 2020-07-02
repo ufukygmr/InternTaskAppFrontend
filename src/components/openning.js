@@ -32,15 +32,15 @@ class Opennning extends React.Component{
         <StatusBar barStyle = "dark-content"/>
         <SafeAreaView style = {styles.container}>
           <View>
-            <Image source = {require("./../images/unigatherLogo.png")} style = {styles.logo}/>
-            <Text style = {styles.header}>UniGather</Text>
+            <Image source = {require("./../images/logo.jpg")} style = {styles.logo}/>
+            <Text style = {styles.header}>Kisso Industries</Text>
           </View>
           <View style = {styles.authButtons}>
             <TouchableOpacity style = {styles.signButton} onPress = {()=> this.props.navigation.navigate("Kayit")}>
-              <Text style = {styles.signText}>Kayit Ol</Text>
+              <Text style = {styles.signText}> Sign Up</Text>
             </TouchableOpacity>
             <TouchableOpacity style = {styles.loginButton} onPress = {() => this.props.navigation.navigate("Giris")}>
-              <Text style = {styles.loginText}>Giris Yap</Text>
+              <Text style = {styles.loginText}>Log In</Text>
             </TouchableOpacity>
           </View>
         </SafeAreaView>
@@ -59,23 +59,23 @@ const styles = StyleSheet.create({
   logo : {
     width : 112,
     height: 80,
-    top: 29*screenHeight/100,
-    
+    top: 20*screenHeight/100,
+    marginLeft: 6*screenWidth/100
   },
   header: {
-    top: screenHeight*30/100,
-    color : '#FF9357',
+    top: screenHeight*21/100,
+    color : '#000',
     fontSize: 23,
     fontWeight: '600',
     textAlign: 'center'
   },
   authButtons : {
     width: '75%',
-    top: screenHeight*40/100,
+    top: screenHeight*35/100,
   
   },
   signButton: {
-    backgroundColor: '#FF9357',
+    backgroundColor: '#000',
     paddingVertical: 16,
     borderRadius: 16,
     marginBottom: 15
@@ -87,13 +87,13 @@ const styles = StyleSheet.create({
     fontWeight: '500'
   },
   loginButton: {
-    borderColor: '#FF9357',
+    borderColor: '#000',
     paddingVertical: 14,
     borderRadius: 20,
     borderWidth: 1.5
   },
   loginText: {
-    color: '#FF9357',
+    color: '#000',
     textAlign: 'center',
     fontSize: 20,
     fontWeight: '500'

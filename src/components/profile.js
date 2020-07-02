@@ -6,13 +6,18 @@ import {
   View,
   Text,
   StatusBar,
+  Image,
   Dimensions,
   TouchableOpacity,
+  TextInput
 } from 'react-native';
 
+import SvgUri from 'react-native-svg-uri';
+// import testSvg from './../images/unigatherLogo.svg';
 import axios from 'axios';
 import MainStore from './store'
 import {observer} from 'mobx-react'
+
 
 const screenWidth = Math.round(Dimensions.get('window').width);
 const screenHeight = Math.round(Dimensions.get('window').height);
@@ -22,7 +27,7 @@ class MainPage extends React.Component{
   constructor(props){
     super(props)
     this.state = {
-
+      password: ""
     }
   }
 
@@ -30,56 +35,56 @@ class MainPage extends React.Component{
     headerMode: 'none'
   }
 
-  getAll = () => {
-      axios.get("http://192.168.0.23:3000/user/all", {
+    getUser = () => {
+      axios.get("http://192.168.0.23:3000/user/me", {
           headers: {
               token : MainStore.token
           }
       })
       .then(res=> {
-          MainStore.users = res.data.result
+          MainStore.user = res.data
       })
-      .catch(err => Alert.alert("Uups! An error accured while retrieving all users"))
+      .catch(err => alert("Unable to Retrieve User"))
   }
 
-  handleDelete = (email) => {
-      let body = {
-          email: email
-      }
-      axios.post("http://192.168.0.23:3000/user/delete", body, {
-          headers: {
-              token : MainStore.token
-          }
-      })
-      this.getAll()
+
+  handlePassword = () => {
+    let body = {
+        email : MainStore.me.email,
+        password: this.state.password
+    }
+    axios.post("http://192.168.0.23:3000/user/changePasswd", body,{
+        headers: {
+            token : MainStore.token
+        }
+    })
+    .then(res=> {
+        console.log(res)
+    })
+    .catch(err => alert("Uups! An error accured while changing Password"))
   }
+
 
   componentDidMount(){
-    this.getAll()
+    this.getUser()
   }
 
   render (){
-    const renderUsers = MainStore.users.map(user => {
-      return ((
-        <View style = {styles.userContainer}>
-          <Text style = {styles.userText}>{user.firstname} {user.lastname}</Text>
-          <Text style = {styles.userText}>{user.email}</Text>
-          <Text style = {styles.userText}>{user.job}</Text>
-          <TouchableOpacity style=  {styles.userButton} onPress = {() => this.handleDelete(user.email)}>
-            <Text style = {styles.userDelete}>Delete User</Text>
-          </TouchableOpacity>
-        </View>
 
-      ))
-    })
 
     return (
       <>
         <StatusBar barStyle = "dark-content"/>
         <SafeAreaView style = {styles.container}>
-          <ScrollView>
-          {renderUsers}
-          </ScrollView>
+          <View style = {styles.userContainer}>
+            <Text style = {styles.userText}>{MainStore.user.firstname} {MainStore.user.lastname}</Text>
+            <Text style = {styles.userText}>{MainStore.user.email}</Text>
+            <Text style = {styles.userText}>{MainStore.user.job}</Text>
+            <TextInput secureTextEntry = {true} style = {styles.input} placeholder= "Enter New Password" value = {this.state.password} onChangeText = {(text)=> this.setState({password: text})}/>
+            <TouchableOpacity style=  {styles.userButton} onPress = {() => this.handleDelete(MainStore.user.email)}>
+              <Text style = {styles.userDelete}>Save Password</Text>
+            </TouchableOpacity>
+          </View>
         </SafeAreaView>
       </>
     )
@@ -96,6 +101,7 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-start',
     flexDirection: 'row',
     flexWrap: 'wrap',
+    backgroundColor: '#f6f6f8'
   },
   header: {
     color: "#5572b5",
@@ -104,21 +110,22 @@ const styles = StyleSheet.create({
     textAlign: 'center'
   },  
   userContainer: {
-    borderWidth: 1,
+    // borderWidth: 1,
     backgroundColor: '#fff',
     borderRadius: 5,
     padding: 20,
     width: 80*screenWidth/100,
     marginLeft: '10%',
     marginTop: 50,
-    justifyContent: 'center'
+    justifyContent: 'center',
+    marginTop: 25*screenHeight/100
   },
   userButton: {
     backgroundColor: 'red',
     padding: 10,
     borderRadius: 5,
     justifyContent: 'center',
-    marginTop: 15
+    marginTop: 20
   },
   userDelete: {
     color: '#fff',
@@ -130,6 +137,13 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     fontSize: 16,
     fontWeight: '600'
+  },
+  input : {
+    textAlign: 'center',
+    marginTop: 20,
+    backgroundColor: '#f6f6f8',
+    padding: 20,
+    fontSize: 16
   }
 
 });

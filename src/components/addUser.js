@@ -17,7 +17,7 @@ const screenWidth = Math.round(Dimensions.get('window').width);
 const screenHeight = Math.round(Dimensions.get('window').height);
 
 
-class SignUp extends React.Component{
+class AddUser extends React.Component{
   constructor(props){
     super(props)
     this.state = {
@@ -30,7 +30,7 @@ class SignUp extends React.Component{
     }
   }
 
-  handleSignUp = () => {
+  handleAddUser = () => {
     if(this.state.passwdAgain !== this.state.passwd){
       alert("Passwords Does Not Match")
     }
@@ -45,8 +45,7 @@ class SignUp extends React.Component{
       console.log(newUser)
       axios.post("http://192.168.0.23:3000/user/signup", newUser)
       .then(res=> {
-          MainStore.token = res.data.token
-          this.props.navigation.navigate("App")
+          Alert.alert("Adding New User Is Succesfull !!")
       })
       .catch(err => Alert.alert("Unable To Create New User"))
     }
@@ -61,7 +60,7 @@ class SignUp extends React.Component{
         <StatusBar barStyle = "dark-content"/>
         <SafeAreaView style = {styles.container}>
           <View>
-            <Image source = {require("./../images/logo.jpg")} style = {styles.logo}/>
+            <Text style = {styles.header}>Add a New User</Text>
           </View>
           <View style = {styles.authButtons}>
             <TextInput  placeholder = 'Name' style = {styles.loginInputs} onChangeText= {(text) => this.setState({name : text})}/>
@@ -71,16 +70,10 @@ class SignUp extends React.Component{
             <TextInput  placeholder = 'Şifre' secureTextEntry = {true} style = {styles.loginInputs} onChangeText= {(text) => this.setState({passwd : text})}/>
             <TextInput  placeholder = 'Şifre Tekrar' secureTextEntry = {true} style = {styles.loginInputs}  onChangeText= {(text) => this.setState({passwdAgain : text})}/>
             <TouchableOpacity style = {styles.signButton} onPress = {() => {
-               this.handleSignUp()
+               this.handleAddUser()
                }}>
               <Text style = {styles.signText}>Kayit Ol</Text>
             </TouchableOpacity>
-            <View style = {{flexDirection: 'row', marginTop: 10, left: '20%'}}>
-              <Text style = {styles.footerText}>Have an account ? </Text>
-              <TouchableOpacity  onPress = {() => this.props.navigation.navigate("Giris")}>
-                <Text style = {styles.footerTextLast}>Login</Text>
-              </TouchableOpacity>
-            </View>
           </View>
         </SafeAreaView>
       </>
@@ -98,12 +91,19 @@ const styles = StyleSheet.create({
   logo : {
     width : 112,
     height: 80,
-    top: 3*screenHeight/100,
+    top: 8*screenHeight/100,
     
+  },
+  header: {
+    top: screenHeight*11/100,
+    color : '#000',
+    fontSize: 23,
+    fontWeight: '600',
+    textAlign: 'center'
   },
   authButtons : {
     width: '75%',
-    top: screenHeight*10/100,
+    top: screenHeight*20/100,
   
   },
   signButton: {
@@ -144,4 +144,4 @@ const styles = StyleSheet.create({
   }
 });
 
-export default SignUp;
+export default AddUser;

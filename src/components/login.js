@@ -13,8 +13,8 @@ import {
   Alert
 } from 'react-native';
 
-import firestore from '@react-native-firebase/firestore';
 import MainStore from './store';
+import axios from 'axios';
 
 const screenWidth = Math.round(Dimensions.get('window').width);
 const screenHeight = Math.round(Dimensions.get('window').height);
@@ -24,30 +24,25 @@ class Login extends React.Component{
   constructor(props){
     super(props)
     this.state = {
-      email : "",
-      password: ""
+      email : "", 
+      passwd : ""
     }
   }
 
-  checkUser = () => {
-    firestore().collection("Users")
-      // .doc("ad")
-      .where("password", "==", this.state.password)
-      .where("email", "==", this.state.email)
-      .get()
-      .then( querySnapshot => {
-        if(querySnapshot.size == 1){
-          querySnapshot.forEach(documentSnapshot => {
-            MainStore.user = documentSnapshot.data()
-            Alert.alert("Giris Basarili")
-            this.props.navigation.navigate("App")
-        })}
-        else{
-          Alert.alert("Giris Basarisiz")
-        }
-        
-      })
+  handleLogin = () => {
+    let newUser = {
+      email : this.state.email,
+      password : this.state.passwd
+    }
+    axios.post("http://192.168.0.23:3000/user/login", newUser)
+    .then(res=> {
+      MainStore.token = res.data.token
+      this.props.navigation.navigate("App")
+    })
+    .catch(err => Alert.alert("An error accured"))
+   
   }
+  
 
   render (){
 
@@ -56,23 +51,18 @@ class Login extends React.Component{
         <StatusBar barStyle = "dark-content"/>
         <SafeAreaView style = {styles.container}>
           <View>
-            <Image source = {require("./../images/unigatherLogo.png")} style = {styles.logo}/>
-            <Text style = {styles.header}>UniGather</Text>
+            <Image source = {require("./../images/logo.jpg")} style = {styles.logo}/>
           </View>
           <View style = {styles.authButtons}>
-            <TextInput  placeholder = 'E-posta' style = {styles.loginInputs} onChangeText = {text => this.setState({email: text})}/>
-            <TextInput  placeholder = 'Şifre' secureTextEntry = {true} style = {styles.loginInputs} onChangeText = {text => this.setState({password: text})}/>
-            <TouchableOpacity>
-              <Text style = {styles.unuttum}>Şifreni mi unuttun?</Text>
-            </TouchableOpacity>
-           
-            <TouchableOpacity style = {styles.signButton} onPress = {() => {this.checkUser()}}>
-              <Text style = {styles.signText}>Giris Yap</Text>
+            <TextInput  placeholder = 'Email' style = {styles.loginInputs} onChangeText = {text => this.setState({email: text})}/>
+            <TextInput  placeholder = 'Password' secureTextEntry = {true} style = {styles.loginInputs} onChangeText = {text => this.setState({passwd: text})}/>     
+            <TouchableOpacity style = {styles.signButton} onPress = {() => {this.handleLogin()}}>
+              <Text style = {styles.signText}>LogIn</Text>
             </TouchableOpacity>
             <View style = {{flexDirection: 'row', marginTop: 60, left: '20%'}}>
-              <Text style = {styles.footerText}>Hesabın yok mu? </Text>
+              <Text style = {styles.footerText}>Don`t Have an Account ? </Text>
               <TouchableOpacity onPress = {() => {this.props.navigation.navigate("Kayit")}}>
-                <Text style = {styles.footerTextLast}>    Kayit Ol</Text>
+                <Text style = {styles.footerTextLast}> Sign Up</Text>
               </TouchableOpacity>
             </View>
           </View>
@@ -92,23 +82,16 @@ const styles = StyleSheet.create({
   logo : {
     width : 112,
     height: 80,
-    top: 15*screenHeight/100,
+    top: 3*screenHeight/100,
     
-  },
-  header: {
-    top: screenHeight*17/100,
-    color : '#FF9357',
-    fontSize: 23,
-    fontWeight: '600',
-    textAlign: 'center'
   },
   authButtons : {
     width: '75%',
-    top: screenHeight*25/100,
+    top: screenHeight*10/100,
   
   },
   signButton: {
-    backgroundColor: '#FF9357',
+    backgroundColor: '#000',
     paddingVertical: 16,
     borderRadius: 16,
     marginBottom: 15,
@@ -131,16 +114,16 @@ const styles = StyleSheet.create({
   },
   unuttum : {
     fontSize: 10,
-    color: '#FF9357',
+    color: '#000',
     textDecorationLine: "underline",
     textAlign: "right"
   },
   footerText: {
-    color: '#FF9357',
+    color: '#000',
     textAlign: 'center'
   },
   footerTextLast:{
-    color: '#FF9357',
+    color: '#000',
     
   }
 });
